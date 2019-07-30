@@ -1,2 +1,2 @@
 # mayiexamples
-一些示例
+一些示例!
