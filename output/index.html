@@ -1,0 +1,78 @@
+<html>
+<head>
+<title>Handout</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="highlight.css">
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<script src="marked.js"></script>
+<script src="script.js"></script>
+<script src="highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+<article><pre><code class="python">#!/usr/bin/python
+# encoding: utf-8</code></pre>
+<div class="markdown">@author: Ian
+@file: tt.py
+@time: 2019-08-07 18:07</div>
+<div class="markdown"># Python Handout
+Turn Python scripts into handouts with Markdown comments and inline figures. An
+alternative to Jupyter notebooks without hidden state that supports any text
+editor.</div>
+<pre><code class="python">import handout
+import matplotlib.pyplot as plt
+import numpy as np</code></pre>
+<div class="markdown">Start your handout with an output directory.</div>
+<pre><code class="python">doc = handout.Handout('output')</code></pre>
+<div class="markdown">## Markdown comments
+Comments with triple quotes are converted to text blocks.
+Text blocks support [Markdown formatting][1], for example:
+- Headlines
+- Hyperlinks
+- Inline `code()` snippets
+- **Bold** and *italic*
+[1]: https://commonmark.org/help/</div>
+<div class="markdown">## Add text and variables
+Write to our handout using the same syntax as Python's `print()`:</div>
+<pre><code class="python">for index in range(3):
+  doc.add_text('Iteration', index)
+doc.show()</code></pre>
+<pre class="message">Iteration 0
+</pre>
+<pre class="message">Iteration 1
+</pre>
+<pre class="message">Iteration 2
+</pre>
+<div class="markdown">## Add Matplotlib figures
+Display matplotlib figures on the handout:</div>
+<pre><code class="python">fig, ax = plt.subplots(figsize=(4, 3))
+ax.plot(np.arange(100))
+fig.tight_layout()
+doc.add_figure(fig)
+doc.show()  # Display figure below this line.</code></pre>
+<img src="figure-0.png" /><div class="markdown">Set the width to display multiple figures side by side:</div>
+<pre><code class="python">for iteration in range(3):
+  fig, ax = plt.subplots(figsize=(3, 2))
+  ax.plot(np.sin(np.linspace(0, 20 / (iteration + 1), 100)))
+  doc.add_figure(fig, width=0.33)
+doc.show()</code></pre>
+<img src="figure-1.png" width="33.0%" /><img src="figure-2.png" width="33.0%" /><img src="figure-3.png" width="33.0%" /><div class="markdown">## Add images and videos
+This requires the `imageio` pip package.</div>
+<pre><code class="python">image_a = np.random.uniform(0, 255, (200, 400, 3)).astype(np.uint8)
+image_b = np.random.uniform(0, 255, (100, 200, 1)).astype(np.uint8)
+doc.add_image(image_a, 'png', width=0.4)
+doc.add_image(image_b, 'jpg', width=0.4)
+doc.show()</code></pre>
+<img src="image-0.png" width="40.0%" /><img src="image-1.jpg" width="40.0%" /><pre><code class="python">video = np.random.uniform(0, 255, (100, 64, 128, 3)).astype(np.uint8)
+doc.add_video(video, 'gif', fps=30, width=0.4)
+doc.add_video(video, 'mp4', fps=30, width=0.4)
+doc.show()</code></pre>
+<img src="video-0.gif" width="40.0%" /><video autoplay controls loop width="40.0%"><source src="video-1.mp4"></video><div class="markdown">## Exclude lines
+Hide code from the handout with the `# handout: exclude` comment:</div>
+<pre><code class="python"># Invisible below:</code></pre>
+<div class="markdown">## View the handout
+The handout is automatically saved when you call `doc.show()`. Just open
+`output/index.html` in your browser.</div>
+</article>
+</body>
+</html>
