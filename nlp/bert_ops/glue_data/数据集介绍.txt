@@ -1,0 +1,1 @@
+Microsoft Research Paraphrase Corpus（MRPC）语料库是释义识别的数据集，其中系统旨在识别两个语句是否相互为释义句。评估标准为分类准确度和 F1 分数。
