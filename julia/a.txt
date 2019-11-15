@@ -1,0 +1,11 @@
+hdfsIp=10.0.107.29
+hdfsUser=root
+hdfsPort=50070
+# 运行环境 local or qh
+env=local
+
+#hdfsIp=10.60.234.168
+#hdfsUser=zeppelin
+#hdfsPort=50070
+## 运行环境 local or qh
+#env=qh
