@@ -500,7 +500,6 @@ class Executor:
         """
         self.eval_node_list = eval_node_list
 
-
     def run(self, feed_dict):
         """Computes values of nodes in eval_node_list given computation graph.
         Parameters
@@ -514,7 +513,8 @@ class Executor:
         node_to_val_map = dict(feed_dict)
         # Traverse graph in topological sort order and compute values for all nodes.
 
-        topo_order = find_topo_sort(self.eval_node_list)
+        topo_order = list(find_topo_sort(self.eval_node_list))
+        print([i.name for i in topo_order])
         for node in topo_order:
             if isinstance(node.op, PlaceholderOp):
                 continue
@@ -540,7 +540,6 @@ def gradients(output_node, node_list):
     A list of gradient values, one for each node in node_list respectively.
 
     """
-
     # a map from node to a list of gradient contributions from each output node
     node_to_output_grads_list = {}
     # Special note on initializing gradient of output_node as oneslike_op(output_node):
@@ -550,14 +549,13 @@ def gradients(output_node, node_list):
     # a map from node to the gradient of that node
     node_to_output_grad = {}
     # Traverse graph in reverse topological order given the output_node that we are taking gradient wrt.
-    reverse_topo_order = reversed(find_topo_sort([output_node]))
-
+    reverse_topo_order = list(reversed(find_topo_sort([output_node])))
     for node in reverse_topo_order:
-        grad = sum_node_list(node_to_output_grads_list[node])
-        node_to_output_grad[node] = grad
+        grad = sum_node_list(node_to_output_grads_list[node])  # Node
+        node_to_output_grad[node] = grad  # node_to_output_grad[node]为对相应的node求导, 即文章中的v^-_n
+        grads = node.op.gradient(node, grad)  # Node list
         for i in range(len(node.inputs)):
             ch = node.inputs[i]
-            grads = node.op.gradient(node, grad)
             grads_list = node_to_output_grads_list.get(ch, [])
             grads_list.append(grads[i])
             node_to_output_grads_list[ch] = grads_list

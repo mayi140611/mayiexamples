@@ -64,26 +64,29 @@ def auto_diff_lr():
     h = 1 / (1 + ad.exp(-ad.reduce_sum(w * x)))
     L = y * ad.log(h) + (1 - y) * ad.log(1 - h)
     w_grad, = ad.gradients(L, [w])
-    executor = ad.Executor([L, w_grad])
-
+    w_grad.name = "w______"
+    print('w_grad: ', w_grad, w_grad.op, w_grad.inputs)
     N = 100
     X_val, Y_val = gen_2d_data(N)
     w_val = np.ones(3)
 
-    plot(N, X_val, Y_val, w_val)
+    # plot(N, X_val, Y_val, w_val, True)
     executor = ad.Executor([L, w_grad])
     test_accuracy(w_val, X_val, Y_val)
     alpha = 0.01
-    max_iters = 300
+    max_iters = 1
     for iteration in range(max_iters):
         acc_L_val = 0
         for i in range(N):
             x_val = X_val[i]
             y_val = np.array(Y_val[i])
-            L_val, w_grad_val = executor.run(feed_dict={w: w_val, x: x_val, y: y_val})
+            L_val, w_grad_val = executor.run(feed_dict={w: w_val, x: x_val, y: y_val})  # 每一个样本调整一次梯度， 可以改一下run方法，改为mini_batch
             w_val += alpha * w_grad_val
             acc_L_val += L_val
-        print("iter = %d, likelihood = %s, w = %s" % (iteration, acc_L_val, w_val))
+            break
+        # print("iter = %d, likelihood = %s, w = %s" % (iteration, acc_L_val, w_val))
+        # if iteration % 50 == 0:
+        #     plot(N, X_val, Y_val, w_val, True)
     test_accuracy(w_val, X_val, Y_val)
     plot(N, X_val, Y_val, w_val, True)
 
