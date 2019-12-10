@@ -514,7 +514,7 @@ class Executor:
         # Traverse graph in topological sort order and compute values for all nodes.
 
         topo_order = list(find_topo_sort(self.eval_node_list))
-        print([i.name for i in topo_order])
+        # print([i.name for i in topo_order])
         for node in topo_order:
             if isinstance(node.op, PlaceholderOp):
                 continue
