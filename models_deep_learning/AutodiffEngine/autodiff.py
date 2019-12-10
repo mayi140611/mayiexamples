@@ -477,6 +477,24 @@ class MatrixTOp(Op):
         # return [oneslike_op(node.inputs[0])]
 
 
+class ReluOp(Op):
+    """
+    矩阵转置
+    """
+    def __call__(self, node):
+        new_node = Op.__call__(self)
+        new_node.inputs = [node]
+        new_node.name = "relu(%s)" % node.name
+        return new_node
+
+    def compute(self, node, input_vals):
+        assert len(input_vals) == 1
+        return np.maximum(input_vals[0], 0)
+
+    def gradient(self, node, output_grad):
+        return [matrixt_op(oneslike_op(node.inputs[0]))]
+
+
 # Create global singletons of operators.
 add_op = AddOp()
 mul_op = MulOp()
@@ -497,6 +515,7 @@ log_op = LogOp()
 exp_op = ExpOp() 
 reduce_sum = ReduceSumOp()
 matrixt_op = MatrixTOp()
+relu_op = ReluOp()
 
 def exp(val):
     if isinstance(val, Node):
