@@ -457,6 +457,26 @@ class ReduceSumOp(Op):
     def gradient(self, node, output_grad):
         return [output_grad * oneslike_op(node.inputs[0])]
 
+
+class MatrixTOp(Op):
+    """
+    矩阵转置
+    """
+    def __call__(self, node):
+        new_node = Op.__call__(self)
+        new_node.inputs = [node]
+        new_node.name = "MatrixT(%s)" % node.name
+        return new_node
+
+    def compute(self, node, input_vals):
+        assert len(input_vals) == 1
+        return input_vals[0].T
+
+    def gradient(self, node, output_grad):
+        return [matrixt_op(oneslike_op(node.inputs[0]))]
+        # return [oneslike_op(node.inputs[0])]
+
+
 # Create global singletons of operators.
 add_op = AddOp()
 mul_op = MulOp()
@@ -476,7 +496,7 @@ zeroslike_op = ZerosLikeOp()
 log_op = LogOp()
 exp_op = ExpOp() 
 reduce_sum = ReduceSumOp()
-
+matrixt_op = MatrixTOp()
 
 def exp(val):
     if isinstance(val, Node):
@@ -604,5 +624,6 @@ def sum_node_list(node_list):
     from operator import add
     from functools import reduce
     return reduce(add, node_list)
+
 
 
